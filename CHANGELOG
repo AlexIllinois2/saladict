@@ -1,6 +1,6 @@
-## 4.0.1 (2026-03-10)
+## 4.0.2 (2026-08-08)
 
 ### Bugs fixed:
 
-- fix lingva service not working
-- fix gemini
+-   fix bing translate not working
+-   fix deepseek model name
