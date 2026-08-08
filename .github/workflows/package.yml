@@ -571,6 +571,7 @@ jobs:
               run: |
                   brew tap allentown521/homebrew-saladict
                   brew update
+                  brew trust allentown521/saladict
                   brew bump-cask-pr saladict --version ${{ env.VERSION }} --no-browse
 
     winget:
