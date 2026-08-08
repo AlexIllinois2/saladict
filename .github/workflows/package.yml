@@ -444,10 +444,6 @@ jobs:
             - uses: actions/download-artifact@v4
               with:
                   name: source
-            - name: Setup Nodejs
-              uses: actions/setup-node@v4
-              with:
-                  node-version: 22
             - name: Build for Linux
               uses: ./.github/actions/build-for-linux
               env:
