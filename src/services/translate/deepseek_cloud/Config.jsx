@@ -21,7 +21,7 @@ export const defaultRequestArguments = JSON.stringify({
     frequency_penalty: 0,
     presence_penalty: 0,
 });
-const availableModels = 'deepseek-chat'.split('、').map((it) => it.trim());
+const availableModels = 'deepseek-v4-flash'.split('、').map((it) => it.trim());
 export function Config(props) {
     const { instanceKey, updateServiceList, onClose } = props;
     const { t } = useTranslation();
