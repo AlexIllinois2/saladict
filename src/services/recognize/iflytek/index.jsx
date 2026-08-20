@@ -1,4 +1,4 @@
-import { fetch } from '@tauri-apps/api/http';
+import { fetch } from '../../../utils/tauri_http';
 import CryptoJS from 'crypto-js';
 
 export async function recognize(base64, language, options = {}) {

@@ -1,6 +1,6 @@
 import { VscChromeClose, VscChromeMinimize, VscChromeMaximize, VscChromeRestore } from 'react-icons/vsc';
 import React, { useEffect, useState } from 'react';
-import { appWindow } from '@tauri-apps/api/window';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 import { listen } from '@tauri-apps/api/event';
 import { Button } from '@nextui-org/react';
 
@@ -12,7 +12,7 @@ export default function WindowControl() {
 
     useEffect(() => {
         listen('tauri://resize', async () => {
-            if (await appWindow.isMaximized()) {
+            if (await getCurrentWindow().isMaximized()) {
                 setIsMax(true);
             } else {
                 setIsMax(false);
@@ -26,7 +26,7 @@ export default function WindowControl() {
                 isIconOnly
                 variant='light'
                 className='w-[35px] h-[35px] rounded-none'
-                onPress={() => appWindow.minimize()}
+                onPress={() => getCurrentWindow().minimize()}
             >
                 <VscChromeMinimize className='text-[16px]' />
             </Button>
@@ -36,9 +36,9 @@ export default function WindowControl() {
                 className='w-[35px] h-[35px] rounded-none'
                 onPress={() => {
                     if (isMax) {
-                        appWindow.unmaximize();
+                        getCurrentWindow().unmaximize();
                     } else {
-                        appWindow.maximize();
+                        getCurrentWindow().maximize();
                     }
                 }}
             >
@@ -48,7 +48,7 @@ export default function WindowControl() {
                 isIconOnly
                 variant='light'
                 className={`w-[35px] h-[35px] rounded-none close-button ${osType === 'Linux' && 'rounded-tr-[10px]'}`}
-                onPress={() => appWindow.close()}
+                onPress={() => getCurrentWindow().close()}
             >
                 <VscChromeClose className='text-[16px]' />
             </Button>

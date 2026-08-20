@@ -1,4 +1,4 @@
-import { fetch } from '@tauri-apps/api/http';
+import { fetch } from '../../../utils/tauri_http';
 import hmacSHA256 from 'crypto-js/hmac-sha256';
 import hashSHA256 from 'crypto-js/sha256';
 import Base64 from 'crypto-js/enc-base64';

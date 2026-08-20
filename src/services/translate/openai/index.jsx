@@ -1,4 +1,4 @@
-import { fetch, Body } from '@tauri-apps/api/http';
+import { fetch, Body } from '../../../utils/tauri_http';
 import { Language } from './info';
 import { defaultRequestArguments } from './Config';
 

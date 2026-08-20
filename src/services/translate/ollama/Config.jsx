@@ -3,7 +3,7 @@ import { INSTANCE_NAME_CONFIG_KEY } from '../../../utils/service_instance';
 import { MdDeleteOutline } from 'react-icons/md';
 import toast, { Toaster } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
-import { open } from '@tauri-apps/api/shell';
+import { open } from '@tauri-apps/plugin-shell';
 import React, { useEffect, useState } from 'react';
 import { Ollama } from 'ollama/browser';
 

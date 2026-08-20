@@ -1,4 +1,4 @@
-import { fetch, Body } from '@tauri-apps/api/http';
+import { fetch, Body } from '../../../utils/tauri_http';
 import { DEFAULT_EDGE_USER_AGENT } from '../../../utils/http';
 
 // New endpoint: edge.microsoft.com/translate/translatetext is token-free.

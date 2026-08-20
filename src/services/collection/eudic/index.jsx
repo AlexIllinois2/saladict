@@ -1,4 +1,4 @@
-import { fetch, Body } from '@tauri-apps/api/http';
+import { fetch, Body } from '../../../utils/tauri_http';
 
 export async function collection(source, target, options = {}) {
     const { config } = options;

@@ -1,92 +1,14 @@
 {
+    "productName": "saladict",
+    "version": "4.0.2",
+    "identifier": "allen.town.focus.saladict",
     "build": {
         "beforeDevCommand": "pnpm dev",
         "beforeBuildCommand": "pnpm build",
-        "devPath": "http://localhost:1420",
-        "distDir": "../dist",
-        "withGlobalTauri": false
+        "devUrl": "http://localhost:1420",
+        "frontendDist": "../dist"
     },
-    "package": {
-        "productName": "saladict",
-        "version": "4.0.2"
-    },
-    "tauri": {
-        "allowlist": {
-            "all": false,
-            "shell": {
-                "all": true,
-                "open": ".*"
-            },
-            "path": {
-                "all": true
-            },
-            "window": {
-                "all": true
-            },
-            "clipboard": {
-                "all": true
-            },
-            "globalShortcut": {
-                "all": true
-            },
-            "notification": {
-                "all": true
-            },
-            "http": {
-                "all": true,
-                "request": true,
-                "scope": ["http://**", "https://**"]
-            },
-            "os": {
-                "all": true
-            },
-            "protocol": {
-                "asset": true,
-                "assetScope": ["$CACHE/**", "$CONFIG/**"]
-            },
-            "fs": {
-                "all": true,
-                "scope": ["$APPCONFIG/**", "$APPCACHE/**"]
-            },
-            "dialog": {
-                "open": true,
-                "save": true
-            }
-        },
-        "bundle": {
-            "active": true,
-            "category": "Utility",
-            "copyright": "GPLv3",
-            "targets": ["nsis", "deb", "rpm", "appimage", "app", "dmg", "updater"],
-            "identifier": "allen.town.focus.saladict",
-            "longDescription": "A cross-platform text translation and ocr software",
-            "shortDescription": "Saladict App",
-            "externalBin": [],
-            "resources": [],
-            "icon": [
-                "icons/32x32.png",
-                "icons/128x128.png",
-                "icons/128x128@2x.png",
-                "icons/icon.icns",
-                "icons/icon.ico"
-            ],
-            "deb": {
-                "depends": ["libxdo-dev", "libxcb1", "libxrandr2", "tesseract-ocr"]
-            },
-            "rpm": {
-                "depends": ["libxdo-dev", "libxcb1", "libxrandr2", "tesseract-ocr"]
-            },
-            "macOS": {
-                "exceptionDomain": "",
-                "frameworks": [],
-                "providerShortName": null,
-                "minimumSystemVersion": "10.13"
-            }
-        },
-        "security": {
-            "csp": "default-src * data: ; img-src * 'self' asset: https: data: ; style-src * 'unsafe-inline'; worker-src 'self' blob: ; script-src * 'unsafe-eval';",
-            "devCsp": "default-src * data: ; img-src * 'self' asset: https: data: ; style-src * 'unsafe-inline'; worker-src 'self' blob: ; script-src * 'unsafe-eval';"
-        },
+    "app": {
         "windows": [
             {
                 "title": "Daemon",
@@ -96,18 +18,60 @@
                 "additionalBrowserArgs": "--disable-web-security"
             }
         ],
-        "systemTray": {
+        "security": {
+            "assetProtocol": {
+                "enable": true,
+                "scope": ["$CACHE/**", "$CONFIG/**"]
+            },
+            "csp": "default-src * data: ; img-src * 'self' asset: https: data: ; style-src * 'unsafe-inline'; worker-src 'self' blob: ; script-src * 'unsafe-eval';",
+            "devCsp": "default-src * data: ; img-src * 'self' asset: https: data: ; style-src * 'unsafe-inline'; worker-src 'self' blob: ; script-src * 'unsafe-eval';"
+        },
+        "trayIcon": {
             "iconPath": "icons/icon.png",
             "iconAsTemplate": true
+        }
+    },
+    "bundle": {
+        "active": true,
+        "category": "Utility",
+        "copyright": "GPLv3",
+        "targets": ["nsis", "deb", "rpm", "appimage", "app", "dmg"],
+        "longDescription": "A cross-platform text translation and ocr software",
+        "shortDescription": "Saladict App",
+        "externalBin": [],
+        "resources": [],
+        "icon": [
+            "icons/32x32.png",
+            "icons/128x128.png",
+            "icons/128x128@2x.png",
+            "icons/icon.icns",
+            "icons/icon.ico"
+        ],
+        "linux": {
+            "deb": {
+                "depends": ["libxdo-dev", "libxcb1", "libxrandr2", "tesseract-ocr"]
+            },
+            "rpm": {
+                "depends": ["libxdo-dev", "libxcb1", "libxrandr2", "tesseract-ocr"]
+            }
+        },
+        "macOS": {
+            "exceptionDomain": "",
+            "frameworks": [],
+            "providerShortName": null,
+            "minimumSystemVersion": "10.13"
+        }
+    },
+    "plugins": {
+        "shell": {
+            "open": ".*"
         },
         "updater": {
             "active": true,
             "dialog": false,
             "endpoints": ["https://github.com/allentown521/saladict/releases/download/updater/update.json"],
             "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IEM2NUYwQzBBNzUwMUY0RUEKUldUcTlBRjFDZ3hmeGpjbVcwN3dIVnlFbTE0Y1AvU2lVNUthaU5xYmovZ2VDaFV2TnVhRS9GWkUK"
-        }
-    },
-    "plugins": {
+        },
         "deep-link": {
             "desktop": {
                 "schemes": ["bas"]

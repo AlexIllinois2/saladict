@@ -1,6 +1,7 @@
 use crate::config::{get, set};
 use crate::window::{updater_window, notify_window};
 use log::{info, warn};
+use tauri_plugin_updater::UpdaterExt;
 
 pub fn check_update(app_handle: tauri::AppHandle) {
     let enable = match get("check_update") {
@@ -12,22 +13,26 @@ pub fn check_update(app_handle: tauri::AppHandle) {
     };
     if enable {
         tauri::async_runtime::spawn(async move {
-            match tauri::updater::builder(app_handle).check().await {
-                Ok(update) => {
-                    if update.is_update_available() {
-                        let should_show = match get("ignore_updater_version") {
-                            Some(version) => {
-                                version.as_str().unwrap() != update.latest_version()
-                            }
-                            None => true
-                        };
-                        info!("New version available");
-                        if should_show {
-                            info!("Show updater window");
-                            updater_window();
-                        }
+            let updater = match app_handle.updater() {
+                Ok(v) => v,
+                Err(e) => {
+                    warn!("Failed to build updater: {}", e);
+                    return;
+                }
+            };
+            match updater.check().await {
+                Ok(Some(update)) => {
+                    let should_show = match get("ignore_updater_version") {
+                        Some(version) => version.as_str().unwrap() != update.version,
+                        None => true,
+                    };
+                    info!("New version available");
+                    if should_show {
+                        info!("Show updater window");
+                        updater_window();
                     }
                 }
+                Ok(None) => {}
                 Err(e) => {
                     warn!("Failed to check update: {}", e);
                 }

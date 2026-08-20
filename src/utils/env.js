@@ -1,4 +1,4 @@
-import { type, arch as archFn, version } from '@tauri-apps/api/os';
+import { type, arch as archFn, version } from '@tauri-apps/plugin-os';
 import { getVersion, getName } from '@tauri-apps/api/app';
 
 export let osType = '';

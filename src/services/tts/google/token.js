@@ -8,7 +8,7 @@
  * https://github.com/hua1995116/google-translate-open-api/blob/master/src/token.js
  */
 
-import { fetch, ResponseType } from '@tauri-apps/api/http';
+import { fetch, ResponseType } from '../../../utils/tauri_http';
 
 /* eslint-disable */
 // BEGIN

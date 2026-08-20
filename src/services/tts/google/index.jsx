@@ -1,4 +1,4 @@
-import { fetch, ResponseType } from '@tauri-apps/api/http';
+import { fetch, ResponseType } from '../../../utils/tauri_http';
 import { getTk } from './token';
 export async function tts(text, lang) {
 

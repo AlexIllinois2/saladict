@@ -1,5 +1,5 @@
 import { ThemeProvider as NextThemesProvider } from 'next-themes';
-import { appWindow } from '@tauri-apps/api/window';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 import { NextUIProvider } from '@nextui-org/react';
 import ReactDOM from 'react-dom/client';
 import React from 'react';

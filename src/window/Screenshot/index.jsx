@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { appCacheDir, join } from '@tauri-apps/api/path';
 import { currentMonitor } from '@tauri-apps/api/window';
-import { convertFileSrc } from '@tauri-apps/api/tauri';
-import { appWindow } from '@tauri-apps/api/window';
+import { convertFileSrc } from '@tauri-apps/api/core';
+import { getCurrentWindow } from '@tauri-apps/api/window';
 import { emit } from '@tauri-apps/api/event';
-import { warn } from 'tauri-plugin-log-api';
-import { invoke } from '@tauri-apps/api';
+import { warn } from '@tauri-apps/plugin-log';
+import { invoke } from '@tauri-apps/api/core';
 
 export default function Screenshot() {
     const [imgurl, setImgurl] = useState('');
@@ -40,9 +40,9 @@ export default function Screenshot() {
                 draggable={false}
                 onLoad={() => {
                     if (imgurl !== '' && imgRef.current.complete) {
-                        void appWindow.show();
-                        void appWindow.setFocus();
-                        void appWindow.setResizable(false);
+                        void getCurrentWindow().show();
+                        void getCurrentWindow().setFocus();
+                        void getCurrentWindow().setResizable(false);
                     }
                 }}
             />
@@ -63,7 +63,7 @@ export default function Screenshot() {
                         setMouseDownX(e.clientX);
                         setMouseDownY(e.clientY);
                     } else {
-                        void appWindow.close();
+                        void getCurrentWindow().close();
                     }
                 }}
                 onMouseMove={(e) => {
@@ -74,7 +74,7 @@ export default function Screenshot() {
                     }
                 }}
                 onMouseUp={async (e) => {
-                    appWindow.hide();
+                    getCurrentWindow().hide();
                     setIsDown(false);
                     setIsMoved(false);
                     const imgWidth = imgRef.current.naturalWidth;
@@ -87,11 +87,11 @@ export default function Screenshot() {
                     const height = bottom - top;
                     if (width <= 0 || height <= 0) {
                         warn('Screenshot area is too small');
-                        await appWindow.close();
+                        await getCurrentWindow().close();
                     } else {
                         await invoke('cut_image', { left, top, width, height });
                         await emit('success');
-                        await appWindow.close();
+                        await getCurrentWindow().close();
                     }
                 }}
             />

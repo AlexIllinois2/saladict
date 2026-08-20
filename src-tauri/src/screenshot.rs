@@ -14,7 +14,7 @@ pub fn screenshot(x: i32, y: i32) {
         if info.x == x && info.y == y {
             let handle = APP.get().unwrap();
             let mut app_cache_dir_path = cache_dir().expect("Get Cache Dir Failed");
-            app_cache_dir_path.push(&handle.config().tauri.bundle.identifier);
+            app_cache_dir_path.push(&handle.config().identifier);
             if !app_cache_dir_path.exists() {
                 // 创建目录
                 fs::create_dir_all(&app_cache_dir_path).expect("Create Cache Dir Failed");

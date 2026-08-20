@@ -1,4 +1,4 @@
-import { fetch } from '@tauri-apps/api/http';
+import { fetch } from '../../../utils/tauri_http';
 import { info } from './info';
 export async function tts(text, lang, options = {}) {
     const { config } = options;

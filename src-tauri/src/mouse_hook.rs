@@ -2,9 +2,9 @@ use crate::utils;
 use crate::window::{self, THUMB_WIN_NAME};
 
 use parking_lot::Mutex;
-use crate::config::{get, set};
+use crate::config::get;
 use mouce::{Mouse, MouseActions};
-use tauri::{LogicalPosition, LogicalSize, Manager, PhysicalPosition, PhysicalSize, State};
+use tauri::{LogicalPosition, LogicalSize, Manager, PhysicalPosition, PhysicalSize};
 use log::info;
 use crate::APP;
 
@@ -84,7 +84,7 @@ pub fn bind_mouse_hook() {
                         is_text_selected_event = true;
                     }
                     let is_click_on_thumb = match APP.get() {
-                        Some(handle) => match handle.get_window(THUMB_WIN_NAME) {
+                        Some(handle) => match handle.get_webview_window(THUMB_WIN_NAME) {
                             Some(window) => match window.outer_position() {
                                 Ok(position) => {
                                     let scale_factor = window.scale_factor().unwrap_or(1.0);

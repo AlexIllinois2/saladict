@@ -1,4 +1,4 @@
-import { readTextFile, BaseDirectory } from '@tauri-apps/api/fs';
+import { readTextFile, BaseDirectory } from '@tauri-apps/plugin-fs';
 import { DropdownTrigger } from '@nextui-org/react';
 import { useDisclosure } from '@nextui-org/react';
 import toast, { Toaster } from 'react-hot-toast';
@@ -7,7 +7,7 @@ import { DropdownItem } from '@nextui-org/react';
 import { useTranslation } from 'react-i18next';
 import { CardBody } from '@nextui-org/react';
 import { Dropdown } from '@nextui-org/react';
-import { warn } from 'tauri-plugin-log-api';
+import { warn } from '@tauri-apps/plugin-log';
 import { Button } from '@nextui-org/react';
 import { Input } from '@nextui-org/react';
 import { Card } from '@nextui-org/react';

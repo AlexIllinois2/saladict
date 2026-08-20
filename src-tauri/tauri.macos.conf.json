@@ -1,23 +1,23 @@
 {
-    "tauri": {
+    "app": {
         "macOSPrivateApi": true,
-        "systemTray": {
+        "trayIcon": {
             "iconPath": "icons_mac/tray.ico",
             "iconAsTemplate": true
-        },
-        "bundle": {
-            "resources": {
-                "resources/*": "resources",
-                "infoplist/zh-Hans.lproj/*": "zh-Hans.lproj",
-                "infoplist/zh-Hant.lproj/*": "zh-Hant.lproj"
-            },
-            "icon": [
-                "icons_mac/32x32.png",
-                "icons_mac/128x128.png",
-                "icons_mac/128x128@2x.png",
-                "icons_mac/icon.icns",
-                "icons_mac/icon.ico"
-            ]
         }
+    },
+    "bundle": {
+        "resources": {
+            "resources/*": "resources",
+            "infoplist/zh-Hans.lproj/*": "zh-Hans.lproj",
+            "infoplist/zh-Hant.lproj/*": "zh-Hant.lproj"
+        },
+        "icon": [
+            "icons_mac/32x32.png",
+            "icons_mac/128x128.png",
+            "icons_mac/128x128@2x.png",
+            "icons_mac/icon.icns",
+            "icons_mac/icon.ico"
+        ]
     }
 }

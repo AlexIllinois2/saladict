@@ -1,4 +1,4 @@
-import { fetch, ResponseType } from '@tauri-apps/api/http';
+import { fetch, ResponseType } from '../../../utils/tauri_http';
 export async function tts(text, lang) {
 
     const res = await fetch(`https://fanyi.baidu.com/gettts/`,{

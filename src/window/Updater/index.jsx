@@ -1,11 +1,12 @@
 import { Code, Card, CardBody, Button, Progress, Skeleton, Checkbox } from '@nextui-org/react';
-import { checkUpdate, installUpdate } from '@tauri-apps/api/updater';
+import { check } from '@tauri-apps/plugin-updater';
 import { getVersion } from '@tauri-apps/api/app';
-import { invoke } from '@tauri-apps/api/tauri';
-import { open } from '@tauri-apps/api/shell';
+import { invoke } from '@tauri-apps/api/core';
+import { open } from '@tauri-apps/plugin-shell';
 import React, { useEffect, useState } from 'react';
-import { appWindow, WebviewWindow, getAll } from '@tauri-apps/api/window';
-import { relaunch } from '@tauri-apps/api/process';
+import { getCurrentWindow, getAllWindows } from '@tauri-apps/api/window';
+import { WebviewWindow } from '@tauri-apps/api/webviewWindow';
+import { relaunch } from '@tauri-apps/plugin-process';
 import toast, { Toaster } from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { listen } from '@tauri-apps/api/event';
@@ -15,8 +16,7 @@ import { lte } from 'semver';
 import { useConfig, useToastStyle } from '../../hooks';
 import { osType } from '../../utils/env';
 
-let unlisten = 0;
-let eventId = 0;
+let pendingUpdate = null;
 const UPDATE_WINDOW_LABEL = 'updater';
 const APP_STORE_ID = '6740262076';
 const MAC_APP_STORE_URL = `https://apps.apple.com/app/id${APP_STORE_ID}`;
@@ -45,35 +45,36 @@ export default function Updater() {
     const toastStyle = useToastStyle();
 
     useEffect(() => {
-        if (appWindow.label === UPDATE_WINDOW_LABEL) {
-            appWindow.show();
+        if (getCurrentWindow().label === UPDATE_WINDOW_LABEL) {
+            getCurrentWindow().show();
         }
 
         async function checkForUpdate() {
             try {
                 setIsAppStore(await invoke('is_app_store_version'));
 
-                const update = await checkUpdate();
-                if (update.shouldUpdate) {
-                    setBody(update.manifest.body);
-                    setUpdateVersion(update.manifest.version);
+                const update = await check();
+                if (update) {
+                    pendingUpdate = update;
+                    setBody(update.body ?? '');
+                    setUpdateVersion(update.version);
 
                     // 如果是 App Store 版本，需要检查 App Store 上的版本
                     if (isAppStore) {
                         const storeVersion = await getAppStoreVersion();
-                        if (storeVersion === update.manifest.version) {
+                        if (storeVersion === update.version) {
                             setShouldUpdate(true);
                         } else {
                             // no need to show updater window because not available on App Store
-                            appWindow.close();
+                            getCurrentWindow().close();
                         }
 
                     } else {
-                        setShouldUpdate(update.shouldUpdate);
+                        setShouldUpdate(true);
                     }
 
                     // Extract force update version from changelog
-                    const forceUpdateMatch = update.manifest.body.match(/--forceUpdate--(\d+\.\d+\.\d+)/);
+                    const forceUpdateMatch = (update.body ?? '').match(/--forceUpdate--(\d+\.\d+\.\d+)/);
                     if (forceUpdateMatch) {
                         const forceVersion = forceUpdateMatch[1];
                         const currentVersion = await getVersion();
@@ -83,10 +84,10 @@ export default function Updater() {
                         setForceUpdate(isForceUpdate);
                         
                         if (isForceUpdate) {
-                            appWindow.setClosable(false);
+                            getCurrentWindow().setClosable(false);
                             // listen window created event, close all other windows except updater
                             const unlisten = await listen('tauri://window-created', async () => {
-                                const windows = await getAll();
+                                const windows = await getAllWindows();
                                 for (const window of windows) {
                                     if (window.label !== UPDATE_WINDOW_LABEL) {
                                         await window.close();
@@ -106,38 +107,34 @@ export default function Updater() {
 
         // 执行更新检查
         checkForUpdate();
-
-        if (unlisten === 0) {
-            unlisten = listen('tauri://update-download-progress', (e) => {
-                if (eventId === 0) {
-                    eventId = e.id;
-                }
-                if (e.id === eventId) {
-                    setTotal(e.payload.contentLength);
-                    setDownloaded((a) => {
-                        return a + e.payload.chunkLength;
-                    });
-                }
-            });
-        }
     }, []);
 
     const handleUpdate = async () => {
         if (isAppStore) {
             // 打开 App Store 页面
             await open(MAC_APP_STORE_URL);
-            appWindow.close();
-        } else {
+            getCurrentWindow().close();
+        } else if (pendingUpdate) {
             // 正常更新流程
-            installUpdate().then(
-                () => {
-                    toast.success(t('updater.installed'), { style: toastStyle, duration: 10000 });
-                    relaunch();
-                },
-                (e) => {
-                    toast.error(e.toString(), { style: toastStyle });
-                }
-            );
+            try {
+                await pendingUpdate.downloadAndInstall((event) => {
+                    switch (event.event) {
+                        case 'Started':
+                            setTotal(event.data.contentLength ?? 0);
+                            setDownloaded(0);
+                            break;
+                        case 'Progress':
+                            setDownloaded((a) => a + event.data.chunkLength);
+                            break;
+                        default:
+                            break;
+                    }
+                });
+                toast.success(t('updater.installed'), { style: toastStyle, duration: 10000 });
+                await relaunch();
+            } catch (e) {
+                toast.error(e.toString(), { style: toastStyle });
+            }
         }
     };
 
@@ -276,7 +273,7 @@ export default function Updater() {
                         variant='flat'
                         color='danger'
                         onPress={() => {
-                            appWindow.close();
+                            getCurrentWindow().close();
                         }}
                     >
                         {t('updater.cancel')}
