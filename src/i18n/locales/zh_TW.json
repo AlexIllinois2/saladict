@@ -73,14 +73,6 @@
                 },
                 "proxy_change": "代理伺服器已變更，請重新啟動應用程式以使變更生效",
                 "proxy_error": "請填寫主機和連接埠",
-                "tray_click_event": "系統列圖示點選事件",
-                "event": {
-                    "config": "偏好設定",
-                    "translate": "翻譯",
-                    "disable": "停用",
-                    "ocr_recognize": "文字辨識",
-                    "ocr_translate": "截圖翻譯"
-                },
                 "app_font": "字型",
                 "app_fallback_font": "備用字型",
                 "font_size": {

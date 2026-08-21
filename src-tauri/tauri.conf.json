@@ -25,10 +25,6 @@
             },
             "csp": "default-src 'self' asset: ipc: data: blob: ; script-src 'self' asset: ipc: http://asset.localhost http://ipc.localhost 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' https: ; style-src 'self' asset: 'unsafe-inline' https: ; img-src 'self' asset: ipc: data: https: http://asset.localhost blob: ; font-src 'self' asset: data: https: ; connect-src 'self' asset: ipc: http://ipc.localhost https: wss: ; worker-src 'self' asset: blob: ; media-src 'self' asset: https: blob: ;",
             "devCsp": "default-src 'self' asset: ipc: data: blob: ; script-src 'self' asset: ipc: http://asset.localhost http://ipc.localhost 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' https: ; style-src 'self' asset: 'unsafe-inline' https: ; img-src 'self' asset: ipc: data: https: http://asset.localhost blob: ; font-src 'self' asset: data: https: ; connect-src 'self' asset: ipc: http://ipc.localhost https: wss: ; worker-src 'self' asset: blob: ; media-src 'self' asset: https: blob: ;"
-        },
-        "trayIcon": {
-            "iconPath": "icons/icon.png",
-            "iconAsTemplate": true
         }
     },
     "bundle": {

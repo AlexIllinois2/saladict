@@ -86,15 +86,7 @@
                     "no_proxy": "不使用代理的地址或IP"
                 },
                 "proxy_change": "代理已经改变，重启应用生效",
-                "proxy_error": "请填写代理地址和端口",
-                "tray_click_event": "托盘点击事件",
-                "event": {
-                    "config": "打开设置",
-                    "translate": "打开翻译窗口",
-                    "disable": "禁用",
-                    "ocr_recognize": "文字识别",
-                    "ocr_translate": "截图翻译"
-                }
+                "proxy_error": "请填写代理地址和端口"
             },
             "translate": {
                 "label": "翻译设置",

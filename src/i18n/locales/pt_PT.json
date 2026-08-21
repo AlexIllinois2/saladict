@@ -244,7 +244,6 @@
         },
         "config": {
             "general": {
-                "tray_click_event": "Evento de Clique na Bandeja",
                 "auto_start": "Iniciar Automaticamente",
                 "proxy": {
                     "title": "Proxy",
@@ -257,13 +256,6 @@
                 "proxy_change": "O proxy foi alterado. Reinicie a aplicação para que as alterações tenham efeito",
                 "default_font": "Padrão",
                 "app_theme": "Tema",
-                "event": {
-                    "disable": "Desativar",
-                    "translate": "Traduzir",
-                    "ocr_translate": "Tradução de Imagem",
-                    "config": "Configuração",
-                    "ocr_recognize": "Reconhecimento de Texto"
-                },
                 "label": "Geral",
                 "theme": {
                     "light": "Luz",

@@ -172,6 +172,7 @@ fn resolve_monitor(_window: &WebviewWindow) -> Monitor {
         .expect("no monitor available")
 }
 
+#[tauri::command(async)]
 pub fn config_window() {
     let (window, _exists) = build_window("config", "Config");
     window
@@ -285,9 +286,9 @@ pub fn translate_window() -> WebviewWindow {
 pub fn selection_translate() {
     use crate::selection::get_selected_text;
     // Get Selected Text
+    let app_handle = APP.get().unwrap();
     let text = get_selected_text();
     if !text.trim().is_empty() {
-        let app_handle = APP.get().unwrap();
         // Write into State
         let state: tauri::State<StringWrapper> = app_handle.state();
         state.0.lock().unwrap().replace_range(.., &text);

@@ -13,7 +13,6 @@ mod screenshot;
 mod selection;
 mod server;
 mod system_ocr;
-mod tray;
 mod updater;
 mod window;
 mod utils;
@@ -35,7 +34,6 @@ use system_ocr::*;
 use tauri::Manager;
 use tauri_plugin_log::{Target, TargetKind};
 use tauri_plugin_notification::NotificationExt;
-use tray::*;
 use updater::{check_update, check_notify};
 use window::config_window;
 use window::updater_window;
@@ -61,23 +59,19 @@ fn main() {
     }
 
     let args: Vec<String> = std::env::args().collect();
-    CLI_ACTION.get_or_init(|| cli::parse_from(&args));
+    let action = cli::parse_from(&args);
+    if action == CliAction::Help {
+        cli::print_help();
+        return;
+    }
+    CLI_ACTION.get_or_init(|| action);
 
     tauri::Builder::default()
-        .plugin(tauri_plugin_single_instance::init(|app, args, cwd| {
-            let action = cli::parse_from(&args);
-            if action != CliAction::None {
-                // A CLI invocation (e.g. GNOME custom shortcut) was made while
-                // the app is already running: forward it to this instance.
-                cli::run(action);
-                return;
-            }
-            let _ = app
-                .notification()
-                .builder()
-                .title("The program is already running. Please do not start it again!")
-                .body(cwd)
-                .show();
+        .plugin(tauri_plugin_single_instance::init(|_app, args, _cwd| {
+            // The app is already running: forward the invocation (e.g. a
+            // click on the desktop launcher icon or a system shortcut) to
+            // this instance instead of starting a second process.
+            cli::run(cli::parse_from(&args));
         }))
         .plugin(
             tauri_plugin_log::Builder::default()
@@ -135,8 +129,6 @@ fn main() {
                 }
             }
             app.manage(StringWrapper(Mutex::new("".to_string())));
-            // Update Tray Menu
-            update_tray(app.handle().clone(), "".to_string(), "".to_string());
             // Start http server
             start_server();
             // Register Global Shortcut
@@ -178,12 +170,11 @@ fn main() {
                 clipboard_monitor.to_string(),
             )));
             start_clipboard_monitor(app.handle().clone());
-            // Execute a CLI action if this instance was started via the
-            // command line (e.g. a GNOME custom keyboard shortcut).
+            // Execute the CLI action. The default action opens the input
+            // translate window, so clicking the desktop launcher icon brings
+            // up the translate popup (or forwards to the running instance).
             let action = *CLI_ACTION.get().unwrap();
-            if action != CliAction::None {
-                cli::run(action);
-            }
+            cli::run(action);
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
@@ -198,7 +189,7 @@ fn main() {
             run_binary,
             open_devtools,
             register_shortcut_by_frontend,
-            update_tray,
+            config_window,
             updater_window,
             screenshot,
             lang_detect,
@@ -209,22 +200,17 @@ fn main() {
             aliyun,
             is_app_store_version
         ])
-        .on_menu_event(|app, event| {
-            tray::handle_menu_event(app, event.id().as_ref());
-        })
-        .on_tray_icon_event(|app, event| {
-            tray_event_handler(app, event);
-        })
         .build(tauri::generate_context!())
         .expect("error while running tauri application")
         // not exit when window close
         .run(|_app_handle, event| {
             match event {
                 tauri::RunEvent::ExitRequested { api, code, .. } => {
-                    // Only prevent exit when it was triggered by closing the last
-                    // window (code == None), so the tray keeps the app alive.
-                    // Allow an explicit app.exit()/restart from the tray menu
-                    // (code == Some) to actually quit the app.
+                    // Only prevent exit when it was triggered by closing the
+                    // last window (code == None), so the app keeps running in
+                    // the background and global shortcuts keep working.
+                    // Allow an explicit app.exit()/restart (code == Some) to
+                    // actually quit the app.
                     if code.is_none() {
                         api.prevent_exit();
                     }

@@ -81,15 +81,7 @@
                     "no_proxy": "Ingen proxy"
                 },
                 "proxy_change": "Proxy-innstillingene er endret. Start programmet på nytt for at endringene skal tre i kraft",
-                "proxy_error": "Vennligst fyll inn vert og port",
-                "tray_click_event": "Handling ved klikk i systemkurv",
-                "event": {
-                    "config": "Innstillinger",
-                    "translate": "Oversett",
-                    "disable": "Deaktiver",
-                    "ocr_recognize": "Tekstgjenkjenning",
-                    "ocr_translate": "Skjermbildeoversettelse"
-                }
+                "proxy_error": "Vennligst fyll inn vert og port"
             },
             "translate": {
                 "label": "Oversettelse",

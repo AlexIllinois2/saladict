@@ -78,15 +78,7 @@
                     "no_proxy": "IP-Adressen ohne Proxy"
                 },
                 "proxy_change": "Proxy wurde geändert, für Änderungen neu starten",
-                "proxy_error": "Bitte Proxy-Adresse und -Port angeben",
-                "tray_click_event": "Aktion beim Klick auf das Tray-Symbol",
-                "event": {
-                    "config": "Einstellungen öffnen",
-                    "translate": "Übersetzungsfenster öffnen",
-                    "disable": "Deaktivieren",
-                    "ocr_recognize": "Texterkennung",
-                    "ocr_translate": "Bildschirmfoto-Übersetzung"
-                }
+                "proxy_error": "Bitte Proxy-Adresse und -Port angeben"
             },
             "translate": {
                 "label": "Übersetzung",

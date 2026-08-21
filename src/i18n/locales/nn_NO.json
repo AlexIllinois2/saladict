@@ -81,15 +81,7 @@
                     "no_proxy": "Ingen proxy"
                 },
                 "proxy_change": "Proxy-innstillingane er endra. Start programmet på nytt for at endringane skal tre i kraft",
-                "proxy_error": "Ver venleg og fyll inn vert og port",
-                "tray_click_event": "Handling ved klikk i systemkurv",
-                "event": {
-                    "config": "Innstillingar",
-                    "translate": "Omsett",
-                    "disable": "Deaktiver",
-                    "ocr_recognize": "Tekstgjenkjenning",
-                    "ocr_translate": "Skjermbileteomsetjing"
-                }
+                "proxy_error": "Ver venleg og fyll inn vert og port"
             },
             "translate": {
                 "label": "Omsetjing",

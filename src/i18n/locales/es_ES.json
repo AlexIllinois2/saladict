@@ -81,14 +81,7 @@
                 "transparent": "Efecto de transparencia",
                 "title": "Ajustes generales",
                 "app_fallback_font": "Fuente alternativa",
-                "dev_mode": "Modo desarrollador",
-                "event": {
-                    "ocr_recognize": "Reconocimiento de texto",
-                    "disable": "Desactivar",
-                    "translate": "Traducir",
-                    "config": "Ajuste",
-                    "ocr_translate": "Traducción de captura de pantalla"
-                }
+                "dev_mode": "Modo desarrollador"
             },
             "translate": {
                 "title": "Ajustes de traducción",

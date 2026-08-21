@@ -270,7 +270,6 @@
         },
         "config": {
             "general": {
-                "tray_click_event": "Événement au clic sur l'icône de statut",
                 "auto_start": "Démarrage automatique",
                 "proxy": {
                     "title": "Proxy",
@@ -282,13 +281,6 @@
                 },
                 "proxy_change": "Le proxy a été modifié. Relancez l'application pour que les modifications prennent effet",
                 "app_theme": "Thème",
-                "event": {
-                    "disable": "Désactiver",
-                    "translate": "Traduire",
-                    "ocr_translate": "Traduction de capture d'écran",
-                    "config": "Préférence",
-                    "ocr_recognize": "Reconnaissance de texte"
-                },
                 "label": "Général",
                 "theme": {
                     "light": "Clair",

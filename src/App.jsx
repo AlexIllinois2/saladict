@@ -125,8 +125,6 @@ export default function App() {
     useEffect(() => {
         if (appLanguage !== null) {
             i18n.changeLanguage(appLanguage);
-            // for the first install to update the tray language
-            invoke('update_tray', { language: appLanguage, copyMode: '' });
         }
     }, [appLanguage]);
 

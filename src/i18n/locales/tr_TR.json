@@ -65,7 +65,6 @@
         "config": {
             "general": {
                 "proxy": {},
-                "event": {},
                 "theme": {},
                 "font_size": {}
             },

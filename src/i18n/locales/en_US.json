@@ -86,15 +86,7 @@
                     "no_proxy": "No Proxy"
                 },
                 "proxy_change": "The proxy has been changed, Restart the application for the changes to take effect",
-                "proxy_error": "Please fill in the host and port",
-                "tray_click_event": "Tray Click Event",
-                "event": {
-                    "config": "Preference",
-                    "translate": "Translate",
-                    "disable": "Disable",
-                    "ocr_recognize": "Text Recognition",
-                    "ocr_translate": "Screenshot Translation"
-                }
+                "proxy_error": "Please fill in the host and port"
             },
             "translate": {
                 "label": "Translate",

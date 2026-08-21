@@ -47,9 +47,6 @@
                     "system": "Системна",
                     "dark": "Темна"
                 },
-                "event": {
-                    "ocr_translate": "Переклад Знимку Екрана"
-                },
                 "server_port": "Порт, якій слухати"
             },
             "translate": {

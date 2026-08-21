@@ -24,12 +24,6 @@
             },
             "general": {
                 "label": "一般設定",
-                "event": {
-                    "translate": "翻訳",
-                    "config": "コンフィグ",
-                    "ocr_recognize": "テキスト認識",
-                    "ocr_translate": "スクリーンショット翻訳"
-                },
                 "title": "一般設定",
                 "app_fallback_font": "フォールバックフォント",
                 "transparent": "透明効果",

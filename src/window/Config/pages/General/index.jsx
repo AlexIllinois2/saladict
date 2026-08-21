@@ -32,7 +32,6 @@ export default function General() {
     const [appFallbackFont, setAppFallbackFont] = useConfig('app_fallback_font', 'default');
     const [appFontSize, setAppFontSize] = useConfig('app_font_size', 16);
     const [transparent, setTransparent] = useConfig('transparent', true);
-    const [trayClickEvent, setTrayClickEvent] = useConfig('tray_click_event', 'config');
     const [showIconWhenTextIsSelected, setShowIconWhenTextIsSelected] = useConfig(
         'show_icon_when_text_is_selected',
         false
@@ -136,7 +135,6 @@ export default function General() {
                                     onAction={(key) => {
                                         setAppLanguage(key);
                                         i18n.changeLanguage(key);
-                                        invoke('update_tray', { language: key, copyMode: '' });
                                     }}
                                 >
                                     {Object.entries(uiLanguageData).map(([key, lang]) => (
@@ -301,32 +299,6 @@ export default function General() {
                                     <DropdownItem key={18}>{t(`config.general.font_size.18`)}</DropdownItem>
                                     <DropdownItem key={20}>{t(`config.general.font_size.20`)}</DropdownItem>
                                     <DropdownItem key={24}>{t(`config.general.font_size.24`)}</DropdownItem>
-                                </DropdownMenu>
-                            </Dropdown>
-                        )}
-                    </div>
-                    <div className={`config-item ${osType === 'Linux' && 'hidden'}`}>
-                        <h3 className='my-auto'>{t('config.general.tray_click_event')}</h3>
-                        {trayClickEvent !== null && (
-                            <Dropdown>
-                                <DropdownTrigger>
-                                    <Button variant='bordered'>{t(`config.general.event.${trayClickEvent}`)}</Button>
-                                </DropdownTrigger>
-                                <DropdownMenu
-                                    aria-label='tray click event'
-                                    onAction={(key) => {
-                                        setTrayClickEvent(key);
-                                    }}
-                                >
-                                    <DropdownItem key='config'>{t('config.general.event.config')}</DropdownItem>
-                                    <DropdownItem key='translate'>{t('config.general.event.translate')}</DropdownItem>
-                                    <DropdownItem key='ocr_recognize'>
-                                        {t('config.general.event.ocr_recognize')}
-                                    </DropdownItem>
-                                    <DropdownItem key='ocr_translate'>
-                                        {t('config.general.event.ocr_translate')}
-                                    </DropdownItem>
-                                    <DropdownItem key='disable'>{t('config.general.event.disable')}</DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
                         )}

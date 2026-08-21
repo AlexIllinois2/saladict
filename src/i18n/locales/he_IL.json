@@ -74,20 +74,12 @@
                     "host": "מארח"
                 },
                 "proxy_error": "אנא מלא את כתובת המארח והיציאה",
-                "event": {
-                    "config": "העדפה",
-                    "translate": "תרגם",
-                    "disable": "מבוטל",
-                    "ocr_translate": "תרגם צילום מסך",
-                    "ocr_recognize": "זיהוי טקסט"
-                },
                 "app_language": "שפת תצוגה",
                 "app_theme": "ערכת נושא",
                 "app_font": "גופן",
                 "dev_mode": "מצב מפתח",
                 "server_port": "יציאת האזנה",
                 "server_port_change": "יציאת ההאזנה שונתה, אנא הפעל מחדש את האפליקציה כדי שהשינויים ייכנסו לתוקף",
-                "tray_click_event": "בלחיצה על סמל המגש",
                 "app_fallback_font": "גופן חילופי"
             },
             "hotkey": {

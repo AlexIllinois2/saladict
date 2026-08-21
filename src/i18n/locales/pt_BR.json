@@ -78,14 +78,6 @@
                 },
                 "proxy_change": "O proxy foi alterado. Reinicie o aplicativo para que as alterações tenham efeito",
                 "proxy_error": "Por favor preencha o host e a porta",
-                "tray_click_event": "Evento de Clique na Bandeja",
-                "event": {
-                    "config": "Preferência",
-                    "translate": "Traduzir",
-                    "disable": "Desabilitar",
-                    "ocr_recognize": "Reconhecimento de Texto",
-                    "ocr_translate": "Tradução de Imagem"
-                },
                 "default_font": "Padrão",
                 "app_font": "Fonte",
                 "app_fallback_font": "Fonte Reserva",

@@ -14,7 +14,7 @@ tauri-build = { version = "2.0", features = [] }
 
 [dependencies]
 
-tauri = { version = "^2.5.0", features = [ "protocol-asset", "tray-icon", "image-png", "devtools"] }
+tauri = { version = "^2.5.0", features = [ "protocol-asset", "devtools"] }
 tauri-plugin-single-instance = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v2" }
 tauri-plugin-autostart = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v2" }
 tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v2" }

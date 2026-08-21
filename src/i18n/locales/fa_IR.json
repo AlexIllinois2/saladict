@@ -41,7 +41,6 @@
         },
         "config": {
             "general": {
-                "tray_click_event": "رویداد کلیک tray",
                 "auto_start": "راه اندازی خودکار",
                 "proxy": {
                     "title": "پروکسی",
@@ -53,13 +52,6 @@
                 },
                 "proxy_change": "پروکسی تغییر کرده است، برنامه را مجددا راه اندازی کنید تا تغییرات اعمال شوند",
                 "app_theme": "تم",
-                "event": {
-                    "disable": "غیرفعال",
-                    "translate": "ترجمه",
-                    "ocr_translate": "ترجمه اسکرین شات",
-                    "config": "پیکربندی",
-                    "ocr_recognize": "تشخیص متن"
-                },
                 "label": "عمومی",
                 "theme": {
                     "light": "روشن",

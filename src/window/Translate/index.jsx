@@ -2,9 +2,9 @@ import { readDir, BaseDirectory, readTextFile, exists } from '@tauri-apps/plugin
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import { getCurrentWindow, currentMonitor } from '@tauri-apps/api/window';
 import { appConfigDir, join } from '@tauri-apps/api/path';
-import { convertFileSrc } from '@tauri-apps/api/core';
+import { convertFileSrc, invoke } from '@tauri-apps/api/core';
 import { Spacer, Button } from '@nextui-org/react';
-import { AiFillCloseCircle } from 'react-icons/ai';
+import { AiFillCloseCircle, AiFillSetting } from 'react-icons/ai';
 import React, { useState, useEffect } from 'react';
 import { listen } from '@tauri-apps/api/event';
 import { BsPinFill } from 'react-icons/bs';
@@ -21,10 +21,16 @@ import { default_translate_service_list } from '../../services/translate/constan
 let blurTimeout = null;
 let resizeTimeout = null;
 let moveTimeout = null;
+// 打开偏好设置时跳过一次失焦关闭，避免配置窗口抢焦点导致翻译窗口被关闭
+let skipNextBlurClose = false;
 
 const listenBlur = () => {
     return listen('tauri://blur', () => {
         if (getCurrentWindow().label === 'translate') {
+            if (skipNextBlurClose) {
+                skipNextBlurClose = false;
+                return;
+            }
             if (blurTimeout) {
                 clearTimeout(blurTimeout);
             }
@@ -258,18 +264,33 @@ export default function Translate() {
                     >
                         <BsPinFill className={`text-[20px] ${pined ? 'text-primary' : 'text-default-400'}`} />
                     </Button>
-                    <Button
-                        isIconOnly
-                        size='sm'
-                        variant='flat'
-                        disableAnimation
-                        className={`my-auto ${osType === 'Darwin' && 'hidden'} bg-transparent`}
-                        onPress={() => {
-                            void getCurrentWindow().close();
-                        }}
-                    >
-                        <AiFillCloseCircle className='text-[20px] text-default-400' />
-                    </Button>
+                    <div className='flex'>
+                        <Button
+                            isIconOnly
+                            size='sm'
+                            variant='flat'
+                            disableAnimation
+                            className='my-auto bg-transparent'
+                            onPress={() => {
+                                skipNextBlurClose = true;
+                                void invoke('config_window');
+                            }}
+                        >
+                            <AiFillSetting className='text-[20px] text-default-400' />
+                        </Button>
+                        <Button
+                            isIconOnly
+                            size='sm'
+                            variant='flat'
+                            disableAnimation
+                            className={`my-auto ${osType === 'Darwin' && 'hidden'} bg-transparent`}
+                            onPress={() => {
+                                void getCurrentWindow().close();
+                            }}
+                        >
+                            <AiFillCloseCircle className='text-[20px] text-default-400' />
+                        </Button>
+                    </div>
                 </div>
                 <div className={`${osType === 'Linux' ? 'h-[calc(100vh-37px)]' : 'h-[calc(100vh-35px)]'} px-[8px]`}>
                     <div className='h-full overflow-y-auto scrollbar-hide'>

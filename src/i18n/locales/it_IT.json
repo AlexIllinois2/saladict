@@ -310,13 +310,6 @@
                 "proxy_change": "Il proxy è stato modificato, riavviare l'applicazione affinché le modifiche abbiano effetto",
                 "default_font": "Predefinito",
                 "app_theme": "Tema",
-                "event": {
-                    "disable": "Disabilita",
-                    "translate": "Traduci",
-                    "ocr_translate": "Traduzione di schermate",
-                    "config": "Configurazione",
-                    "ocr_recognize": "Riconoscimento del testo"
-                },
                 "label": "Generale",
                 "theme": {
                     "light": "Chiaro",
