@@ -1,4 +1,5 @@
 use crate::clipboard::*;
+use crate::cmd::is_app_store_version;
 use crate::config::{get, set};
 use crate::window::config_window;
 use crate::window::input_translate;
@@ -6,12 +7,21 @@ use crate::window::ocr_recognize;
 use crate::window::ocr_translate;
 use crate::window::updater_window;
 use log::info;
+use std::sync::Mutex;
+use std::sync::atomic::{AtomicU64, Ordering};
+use std::time::{Duration, Instant};
 use tauri::menu::{CheckMenuItem, IsMenuItem, Menu, MenuItem, PredefinedMenuItem, Submenu};
-use tauri::tray::{MouseButton, TrayIconEvent};
+use tauri::tray::{MouseButton, MouseButtonState, TrayIconEvent};
 use tauri::{AppHandle, Emitter, Manager, Wry};
 use tauri_plugin_global_shortcut::GlobalShortcutExt;
 use tauri_plugin_shell::ShellExt;
-use crate::cmd::is_app_store_version;
+
+// Manual double-click detection. The native `TrayIconEvent::DoubleClick` event
+// is only delivered on Windows, so we track click timestamps ourselves to make
+// double-click behave the same on every platform that emits click events.
+static LAST_TRAY_CLICK: Mutex<Option<Instant>> = Mutex::new(None);
+static TRAY_CLICK_GENERATION: AtomicU64 = AtomicU64::new(0);
+const DOUBLE_CLICK_INTERVAL: Duration = Duration::from_millis(400);
 
 struct TrayLabels {
     input_translate: &'static str,
@@ -398,13 +408,46 @@ pub fn update_tray(app_handle: AppHandle, mut language: String, mut copy_mode: S
 
 pub fn tray_event_handler(_app: &AppHandle, event: TrayIconEvent) {
     match event {
-        TrayIconEvent::Click { button, .. } => {
-            if button == MouseButton::Left {
-                on_tray_click();
+        TrayIconEvent::Click {
+            button,
+            button_state,
+            ..
+        } => {
+            if button == MouseButton::Left && button_state == MouseButtonState::Up {
+                handle_tray_left_click();
             }
         }
         _ => {}
     }
+}
+
+fn handle_tray_left_click() {
+    let now = Instant::now();
+    let mut last = LAST_TRAY_CLICK.lock().unwrap();
+    let is_double_click = match *last {
+        Some(prev) => now.duration_since(prev) < DOUBLE_CLICK_INTERVAL,
+        None => false,
+    };
+    let generation = TRAY_CLICK_GENERATION.fetch_add(1, Ordering::SeqCst) + 1;
+    if is_double_click {
+        // Second click of a double-click: open the translation window and
+        // cancel the single-click action scheduled by the first click.
+        *last = None;
+        drop(last);
+        input_translate();
+        return;
+    }
+    *last = Some(now);
+    let my_generation = generation;
+    drop(last);
+    // Delay the single-click action so that a quick second click can upgrade it
+    // to a double-click before the single action runs.
+    std::thread::spawn(move || {
+        std::thread::sleep(DOUBLE_CLICK_INTERVAL);
+        if TRAY_CLICK_GENERATION.load(Ordering::SeqCst) == my_generation {
+            on_tray_click();
+        }
+    });
 }
 
 pub fn handle_menu_event(app: &AppHandle, id: &str) {

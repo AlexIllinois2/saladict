@@ -368,7 +368,39 @@ This can solve the following problems
 ## Shortcut key cannot be used
 
 Due to Tauri's lack of support for Wayland, the shortcut key scheme in the Saladict application cannot be used under Wayland.
-You can set the system shortcut and send a request with `curl` to call Saladict, see [External Calls](#external-calls) for details
+You can use the command line arguments together with a system keyboard shortcut to trigger the features on Wayland (e.g. GNOME on Fedora 44).
+
+### Command line calls
+
+Saladict supports triggering features through command line arguments, without relying on in-app shortcuts and without requiring the app to be started first:
+
+```bash
+saladict --selection-translate   # Selection translate (reads the mouse-selected text and translates it)
+saladict --input-translate       # Input translate
+saladict --ocr-recognize         # Screenshot OCR
+saladict --ocr-translate         # Screenshot translate
+saladict --config                # Open settings
+```
+
+> On Wayland, selection translate reads the PRIMARY selection (mouse drag) via `wl-paste` (requires the `wl-clipboard` package), falling back to the clipboard. If the app is already running, the invocation is forwarded to the running instance.
+
+### Setting up a custom shortcut on GNOME
+
+Using GNOME as an example (e.g. Fedora 44):
+
+1. Open `Settings` -> `Keyboard` -> `View and Customize Shortcuts` -> `Custom Shortcuts`
+2. Click `+` to add a custom shortcut
+3. Set any name, and set the command to:
+   ```bash
+   saladict --selection-translate
+   ```
+4. Click `Set Shortcut...` and press the desired key combination (e.g. `Ctrl+Alt+T`)
+
+Then select text with the mouse and press the key combination to show the translation window. If `saladict` is not in your `PATH`, use the full path (e.g. `/usr/bin/saladict` or `~/.local/bin/saladict`).
+
+### Using curl
+
+You can also set the system shortcut and send a request with `curl` to call Saladict (requires the app to be running), see [External Calls](#external-calls) for details
 
 ## Screenshot doesn't work
 

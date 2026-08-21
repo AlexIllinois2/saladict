@@ -19,7 +19,18 @@ use cocoa::appkit::NSWindow;
 use mouse_position::mouse_position::Mouse;
 use serde_json;
 
-pub const THUMB_WIN_NAME: &str = "thumb";// Get daemon window instance
+pub const THUMB_WIN_NAME: &str = "thumb";
+
+// On Linux, transparent (alpha) webviews are unreliable on Wayland compositors:
+// the window is created and shows up in the taskbar/dock, but renders fully
+// invisible because WebKitGTK's alpha surface is not composited. X11/XWayland
+// handles alpha correctly, so only enable transparency there.
+#[cfg(not(target_os = "macos"))]
+fn use_transparent_window() -> bool {
+    std::env::var_os("WAYLAND_DISPLAY").is_none()
+}
+
+// Get daemon window instance
 fn get_daemon_window() -> WebviewWindow {
     let app_handle = APP.get().unwrap();
     match app_handle.get_webview_window("daemon") {
@@ -121,7 +132,17 @@ fn build_window(label: &str, title: &str) -> (WebviewWindow, bool) {
             }
             #[cfg(not(target_os = "macos"))]
             {
-                builder = builder.transparent(true).decorations(false);
+                if use_transparent_window() {
+                    builder = builder.transparent(true).decorations(false);
+                } else {
+                    // Wayland: keep the window opaque so it actually renders.
+                    // A light background also acts as a fallback if the
+                    // frontend stylesheet hasn't painted yet.
+                    builder = builder
+                        .transparent(false)
+                        .decorations(false)
+                        .background_color(tauri::webview::Color(245, 245, 245, 255));
+                }
             }
             let window = builder.build().unwrap();
 
@@ -262,9 +283,9 @@ pub fn translate_window() -> WebviewWindow {
 }
 
 pub fn selection_translate() {
-    use selection::get_text;
+    use crate::selection::get_selected_text;
     // Get Selected Text
-    let text = get_text();
+    let text = get_selected_text();
     if !text.trim().is_empty() {
         let app_handle = APP.get().unwrap();
         // Write into State
@@ -517,7 +538,11 @@ pub fn get_thumb_window(x: i32, y: i32) -> WebviewWindow {
 
                 #[cfg(not(feature = "app-store"))]
                 {
-                    builder = builder.transparent(true);
+                    if use_transparent_window() {
+                        builder = builder.transparent(true);
+                    } else {
+                        builder = builder.transparent(false);
+                    }
                 }
                 builder.build().unwrap()
             };

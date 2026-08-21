@@ -2,6 +2,7 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 mod backup;
+mod cli;
 mod clipboard;
 mod cmd;
 mod config;
@@ -9,6 +10,7 @@ mod error;
 mod hotkey;
 mod lang_detect;
 mod screenshot;
+mod selection;
 mod server;
 mod system_ocr;
 mod tray;
@@ -18,6 +20,7 @@ mod utils;
 mod mouse_hook;
 
 use backup::*;
+use cli::CliAction;
 use clipboard::*;
 use cmd::*;
 use config::*;
@@ -43,6 +46,9 @@ pub static APP: OnceCell<tauri::AppHandle> = OnceCell::new();
 // Text to be translated
 pub struct StringWrapper(pub Mutex<String>);
 
+// CLI action passed to this process (e.g. `saladict --selection-translate`)
+pub static CLI_ACTION: OnceCell<CliAction> = OnceCell::new();
+
 fn main() {
     // On Linux, prefer the native Wayland backend (GTK/WebKitGTK) instead of
     // XWayland. With both WAYLAND_DISPLAY and DISPLAY set, GTK may otherwise
@@ -54,8 +60,18 @@ fn main() {
         std::env::set_var("GDK_BACKEND", "wayland");
     }
 
+    let args: Vec<String> = std::env::args().collect();
+    CLI_ACTION.get_or_init(|| cli::parse_from(&args));
+
     tauri::Builder::default()
-        .plugin(tauri_plugin_single_instance::init(|app, _, cwd| {
+        .plugin(tauri_plugin_single_instance::init(|app, args, cwd| {
+            let action = cli::parse_from(&args);
+            if action != CliAction::None {
+                // A CLI invocation (e.g. GNOME custom shortcut) was made while
+                // the app is already running: forward it to this instance.
+                cli::run(action);
+                return;
+            }
             let _ = app
                 .notification()
                 .builder()
@@ -162,6 +178,12 @@ fn main() {
                 clipboard_monitor.to_string(),
             )));
             start_clipboard_monitor(app.handle().clone());
+            // Execute a CLI action if this instance was started via the
+            // command line (e.g. a GNOME custom keyboard shortcut).
+            let action = *CLI_ACTION.get().unwrap();
+            if action != CliAction::None {
+                cli::run(action);
+            }
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![

@@ -128,11 +128,18 @@ const needDeleteCookies = (url: string): boolean => {
     return url.includes(import.meta.env.VITE_API_BASE_URL) && url.includes('sign-out');
 };
 
+// Tauri v2 webviews run under the `tauri://localhost` origin, which is not a
+// valid `http(s)://` base URL for better-auth. When no backend URL is
+// configured we fall back to a syntactically valid placeholder so the auth
+// client can be constructed (auth-dependent UI will simply fail its network
+// calls gracefully) instead of crashing the whole app at module load.
+const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || 'http://localhost';
+
 const needSaveCookies = (url: string): boolean => {
-    return url.includes(import.meta.env.VITE_API_BASE_URL) && !url.includes('api/auth/sign-up/');
+    return url.includes(apiBaseUrl) && !url.includes('api/auth/sign-up/');
 };
 
 export const authClient = createAuthClient({
-    baseURL: import.meta.env.VITE_API_BASE_URL,
+    baseURL: apiBaseUrl,
     fetchOptions: { customFetchImpl: tauriFetchImpl },
 });

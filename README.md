@@ -365,7 +365,39 @@ Ubuntu 22.04 开始默认使用 Wayland 作为显示服务器，如果需要使�
 
 ## 快捷键无法使用
 
-由于 Tauri 的快捷键方案并没有支持 Wayland，所以 沙拉翻译 应用内的快捷键设置在 Wayland 下无法使用。 您可以设置系统快捷用 curl 发送请求来触发 沙拉翻译，详见[外部调用](#外部调用)
+由于 Tauri 的快捷键方案并没有支持 Wayland，所以 沙拉翻译 应用内的快捷键设置在 Wayland 下无法使用。 您可以通过命令行参数 + 系统快捷键的方式在 Wayland（如 Fedora 44 等 GNOME 桌面）下使用快捷键功能。
+
+### 命令行调用
+
+沙拉翻译 支持通过命令行参数触发对应功能，无需依赖应用内快捷键，也无需先启动应用：
+
+```bash
+saladict --selection-translate   # 划词翻译（读取鼠标选中的文本，自动翻译）
+saladict --input-translate       # 输入翻译
+saladict --ocr-recognize         # 截图 OCR
+saladict --ocr-translate         # 截图翻译
+saladict --config                # 打开设置
+```
+
+> 划词翻译在 Wayland 下通过 `wl-paste` 读取鼠标拖选的 PRIMARY 选区（需要安装 `wl-clipboard`），读取失败时会回退到读取剪贴板。如果应用已在运行，会直接转发给已运行的实例处理。
+
+### GNOME 设置系统快捷键
+
+以 GNOME 为例（适用于 Fedora 44 等），设置划词翻译快捷键：
+
+1. 打开 `设置` -> `键盘` -> `查看及自定义快捷键` -> `自定义快捷键`
+2. 点击 `+` 添加自定义快捷键
+3. 名称随意填写，命令填入：
+   ```bash
+   saladict --selection-translate
+   ```
+4. 点击 `设置快捷键`，按下你想使用的组合键（例如 `Ctrl+Alt+T`）
+
+之后鼠标选中文本，按下组合键即可弹出翻译窗口。如果 `saladict` 不在 PATH 中，请使用完整路径（例如 `/usr/bin/saladict` 或 `~/.local/bin/saladict`）。
+
+### 使用 curl 触发
+
+也可以直接使用 curl 发送请求来触发 沙拉翻译（需要应用已启动），详见[外部调用](#外部调用)。
 
 ## 截图无法使用
 
