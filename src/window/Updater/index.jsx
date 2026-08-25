@@ -32,7 +32,6 @@ async function getAppStoreVersion() {
 }
 
 export default function Updater() {
-    const [transparent] = useConfig('transparent', true);
     const [downloaded, setDownloaded] = useState(0);
     const [total, setTotal] = useState(0);
     const [body, setBody] = useState('');
@@ -140,7 +139,7 @@ export default function Updater() {
 
     return (
         <div
-            className={`${transparent ? 'bg-background/90' : 'bg-background'} h-screen ${
+            className={`${'bg-background/90'} h-screen ${
                 osType === 'Linux' && 'rounded-[10px] border-1 border-default-100'
             }`}
         >

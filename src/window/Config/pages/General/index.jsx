@@ -31,12 +31,10 @@ export default function General() {
     const [appFont, setAppFont] = useConfig('app_font', 'default');
     const [appFallbackFont, setAppFallbackFont] = useConfig('app_fallback_font', 'default');
     const [appFontSize, setAppFontSize] = useConfig('app_font_size', 16);
-    const [transparent, setTransparent] = useConfig('transparent', true);
     const [showIconWhenTextIsSelected, setShowIconWhenTextIsSelected] = useConfig(
         'show_icon_when_text_is_selected',
         false
     );
-    const [hideDockIcon, setHideDockIcon] = useConfig('hide_dock_icon', true);
     const toastStyle = useToastStyle();
     const { t, i18n } = useTranslation();
     const { setTheme } = useTheme();
@@ -78,21 +76,6 @@ export default function General() {
                             />
                         </div>
                     )}
-                    <div className='config-item'>
-                        <h3>{t('config.general.hide_dock_icon')}</h3>
-                        {hideDockIcon !== null && (
-                            <Switch
-                                isSelected={hideDockIcon}
-                                onValueChange={(v) => {
-                                    setHideDockIcon(v);
-                                    toast.success(t('common.need_restart'), {
-                                        duration: 1000,
-                                        style: toastStyle,
-                                    });
-                                }}
-                            />
-                        )}
-                    </div>
                     {osType !== 'Linux' && showIconWhenTextIsSelected !== null && !isAppStore && (
                         <div className='config-item'>
                             <div className='flex items-center gap-2'>
@@ -301,17 +284,6 @@ export default function General() {
                                     <DropdownItem key={24}>{t(`config.general.font_size.24`)}</DropdownItem>
                                 </DropdownMenu>
                             </Dropdown>
-                        )}
-                    </div>
-                    <div className={`config-item ${osType === 'Darwin' && 'hidden'}`}>
-                        <h3>{t('config.general.transparent')}</h3>
-                        {transparent !== null && (
-                            <Switch
-                                isSelected={transparent}
-                                onValueChange={(v) => {
-                                    setTransparent(v);
-                                }}
-                            />
                         )}
                     </div>
                 </CardBody>

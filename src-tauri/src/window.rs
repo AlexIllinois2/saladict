@@ -107,9 +107,6 @@ fn build_window(label: &str, title: &str) -> (WebviewWindow, bool) {
         }
         None => {
             info!("Window not existence, Creating new window: {}", label);
-            let hide_dock_icon = get("hide_dock_icon")
-                .and_then(|v| v.as_bool())
-                .unwrap_or(true);
             #[allow(unused_mut)]
             let mut builder = tauri::WebviewWindowBuilder::new(
                 app_handle,
@@ -122,7 +119,7 @@ fn build_window(label: &str, title: &str) -> (WebviewWindow, bool) {
             .title(title)
             .visible(false)
             .shadow(label != "screenshot")
-            .skip_taskbar(hide_dock_icon);
+            .skip_taskbar(true);
 
             #[cfg(target_os = "macos")]
             {

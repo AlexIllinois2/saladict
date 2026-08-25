@@ -7,7 +7,6 @@ mod clipboard;
 mod cmd;
 mod config;
 mod error;
-mod hotkey;
 mod lang_detect;
 mod screenshot;
 mod selection;
@@ -23,9 +22,8 @@ use cli::CliAction;
 use clipboard::*;
 use cmd::*;
 use config::*;
-use hotkey::*;
 use lang_detect::*;
-use log::info;
+use log::{info, LevelFilter};
 use once_cell::sync::OnceCell;
 use screenshot::screenshot;
 use server::*;
@@ -48,13 +46,10 @@ pub struct StringWrapper(pub Mutex<String>);
 pub static CLI_ACTION: OnceCell<CliAction> = OnceCell::new();
 
 fn main() {
-    // On Linux, prefer the native Wayland backend (GTK/WebKitGTK) instead of
-    // XWayland. With both WAYLAND_DISPLAY and DISPLAY set, GTK may otherwise
-    // fall back to X11/XWayland, where the window can fail to appear on a
-    // Wayland session. Only force it when a Wayland session actually exists so
-    // pure-X11 sessions still work.
+    // X11 support removed: run on the native Wayland backend only. Force GTK /
+    // WebKitGTK to use Wayland so the app no longer falls back to X11/XWayland.
     #[cfg(target_os = "linux")]
-    if std::env::var_os("WAYLAND_DISPLAY").is_some() && std::env::var_os("GDK_BACKEND").is_none() {
+    if std::env::var_os("GDK_BACKEND").is_none() {
         std::env::set_var("GDK_BACKEND", "wayland");
     }
 
@@ -79,6 +74,13 @@ fn main() {
                     Target::new(TargetKind::LogDir { file_name: None }),
                     Target::new(TargetKind::Stdout),
                 ])
+                // 默认只输出 Info 及以上，避免 notify 等依赖的 TRACE 刷屏
+                .level(LevelFilter::Info)
+                // 直接丢弃 notify / notify_debouncer_full 的日志（监听 config.json 的 inotify 噪声）
+                .filter(|metadata| {
+                    let target = metadata.target();
+                    !(target.starts_with("notify") || target.starts_with("notify_debouncer_full"))
+                })
                 .build(),
         )
         .plugin(tauri_plugin_autostart::init(
@@ -94,7 +96,6 @@ fn main() {
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_notification::init())
-        .plugin(tauri_plugin_global_shortcut::Builder::new().build())
         .plugin(tauri_plugin_updater::Builder::new().build())
         .plugin(tauri_plugin_process::init())
         .setup(|app| {
@@ -116,33 +117,9 @@ fn main() {
             }
             // create thumb window
             let _ = window::get_thumb_window(0, 0);
-            #[cfg(target_os = "macos")]
-            {
-                // hide macos dock icon if set
-                let hide_dock_icon = get("hide_dock_icon")
-                .and_then(|v| v.as_bool())
-                .unwrap_or(true);
-                if hide_dock_icon {
-                    app.set_activation_policy(tauri::ActivationPolicy::Accessory);
-                } else {
-                    app.set_activation_policy(tauri::ActivationPolicy::Regular);
-                }
-            }
             app.manage(StringWrapper(Mutex::new("".to_string())));
             // Start http server
             start_server();
-            // Register Global Shortcut
-            match register_shortcut("all") {
-                Ok(()) => {}
-                Err(e) => {
-                    let _ = app
-                        .notification()
-                        .builder()
-                        .title("Failed to register global shortcut")
-                        .body(e)
-                        .show();
-                }
-            }
             match get("proxy_enable") {
                 Some(v) => {
                     if v.as_bool().unwrap() && get("proxy_host").map_or(false, |host| !host.as_str().unwrap().is_empty()) {
@@ -188,7 +165,6 @@ fn main() {
             unset_proxy,
             run_binary,
             open_devtools,
-            register_shortcut_by_frontend,
             config_window,
             updater_window,
             screenshot,
@@ -208,9 +184,9 @@ fn main() {
                 tauri::RunEvent::ExitRequested { api, code, .. } => {
                     // Only prevent exit when it was triggered by closing the
                     // last window (code == None), so the app keeps running in
-                    // the background and global shortcuts keep working.
-                    // Allow an explicit app.exit()/restart (code == Some) to
-                    // actually quit the app.
+                    // the background (e.g. to stay reachable from the desktop
+                    // launcher / system shortcut). Allow an explicit
+                    // app.exit()/restart (code == Some) to actually quit.
                     if code.is_none() {
                         api.prevent_exit();
                     }

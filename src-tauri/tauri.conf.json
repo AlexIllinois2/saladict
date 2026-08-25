@@ -43,15 +43,15 @@
             "icons/icon.icns",
             "icons/icon.ico"
         ],
-        "linux": {
-            "deb": {
-                "depends": ["libxdo-dev", "libxcb1", "libxrandr2", "tesseract-ocr"]
+            "linux": {
+                "deb": {
+                    "depends": ["tesseract-ocr"]
+                },
+                "rpm": {
+                    "depends": ["tesseract"],
+                    "compression": { "type": "bzip2", "level": 9 }
+                }
             },
-            "rpm": {
-                "depends": ["libxdo", "libxcb", "libXrandr", "tesseract"],
-                "compression": { "type": "bzip2", "level": 9 }
-            }
-        },
         "macOS": {
             "exceptionDomain": "",
             "frameworks": [],

@@ -95,7 +95,6 @@
       "allow": [{ "url": "http://*" }, { "url": "https://*" }]
     },
     "notification:default",
-    "global-shortcut:default",
     "process:default",
     "updater:default",
     "autostart:default",
